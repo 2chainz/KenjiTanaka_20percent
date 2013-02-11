@@ -1,5 +1,14 @@
 hello friends!
 
+Febuary 10, 2013 - 22:18
+-Made the player class form it's triangle properly
+-Added a pause feature where the game stops running the when the mouse is outside the window
+-Changed the cursor to a crosshair from the normal thingy
+-Made the player's shoot() method print out "pew" when it is called
+-Changed the shape of the player so that it's a 11x5 isosceles triangle rather than a 10x5 one. 
+
+
+
 Febuary 10, 2013 - 20:00
 -Added the GameObject class, an abstract class that all objects in the game will inherit from, such as the player and the asteroids
 	-It inherits from polygon.

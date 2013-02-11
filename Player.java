@@ -12,7 +12,7 @@ public class Player extends GameObject{
 	int x3 = 10;
 	int y3 = 10;
 	int centerx = 5;
-	int centery = 5;
+	int centery = 6;
 
 	public Player(){
 		super();
@@ -38,12 +38,10 @@ public class Player extends GameObject{
 		this.addPoint(x2,y2);
 		this.addPoint(x3,y3);
 		
-		// TODO Auto-generated method stub
-		
 	}
 	
 	public void shoot(){
-		
+		System.out.println("pew");
 	}
 	
 	public void pointAtMouse(Point windowLocation){
@@ -60,19 +58,15 @@ public class Player extends GameObject{
 	@Override
 	public void rotate(double radians) {
 		this.reset();
-		x1 = (int) (Math.cos(0 - radians - (Math.PI / 2)) * 5) + centerx;
-		y1 = (int) (Math.sin(0 - radians - (Math.PI / 2)) * 5) + centery;
+		x1 = (int) (Math.cos(0 - radians - (Math.PI / 2)) * 6) + centerx;
+		y1 = (int) (Math.sin(0 - radians - (Math.PI / 2)) * 6) + centery;
 
-		x2 = (int) (Math.cos(0 - radians - (( 3 * Math.PI )/ 4)) * (5 + Math.sqrt(2))) + centerx;
-		y2 = (int) (Math.sin(0 - radians - (( 3 * Math.PI )/ 4)) * (5 + Math.sqrt(2))) + centery;
+		x2 = (int) (0 - Math.cos(0 - radians - (( 3 * Math.PI )/ 4)) * (5 + Math.sqrt(2))) + centerx;
+		y2 = (int) (0 - Math.sin(0 - radians - (( 3 * Math.PI )/ 4)) * (5 + Math.sqrt(2))) + centery;
 
 		x3 = (int) (Math.cos(0 - radians - (( 5 * Math.PI )/ 4)) * (5 + Math.sqrt(2))) + centerx;
 		y3 = (int) (Math.sin(0 - radians - (( 5 * Math.PI )/ 4)) * (5 + Math.sqrt(2))) + centery;
 		
-		System.out.println("1: " + x1 + " " + y1);
-		System.out.println("2: " + x2 + " " + y2);
-		System.out.println("3: " + x3 + " " + y3);
-
 		this.addPoint(x1,y1);
 		this.addPoint(x2,y2);
 		this.addPoint(x3,y3);
