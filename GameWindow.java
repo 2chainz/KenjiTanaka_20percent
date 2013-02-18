@@ -10,12 +10,17 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferStrategy;
+import java.util.LinkedList;
 
 import javax.swing.JFrame;
 
 public class GameWindow extends JFrame implements Runnable, KeyListener, MouseListener {
 	
-	String Version = "0.0.2";
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5241432827349470486L;
+	String Version = "0.0.3";
 
 	public static void main(String[] args){
 		new GameWindow();
@@ -28,6 +33,14 @@ public class GameWindow extends JFrame implements Runnable, KeyListener, MouseLi
 	int dx, dy;
 	boolean running = true;
 	boolean shooting = false;
+	long previoustime = 0;
+
+	GameObject[] objDraw;
+	
+	boolean leftpressed = false;
+	boolean rightpressed = false;
+	boolean uppressed = false;
+	boolean downpressed = false;
 	
 	public GameWindow(){
 		super("Asteroids in Java");
@@ -43,6 +56,8 @@ public class GameWindow extends JFrame implements Runnable, KeyListener, MouseLi
 		c.addKeyListener(this);
 		c.addMouseListener(this);
 		c.requestFocusInWindow();
+		
+		
 		
 		c.createBufferStrategy(2);
 		bf = c.getBufferStrategy();
@@ -63,42 +78,97 @@ public class GameWindow extends JFrame implements Runnable, KeyListener, MouseLi
 
 	@Override
 	public void run() {
+		GameObjectHolder goh = new GameObjectHolder();
 		p = new Player();
 		bf.show();
+
+		goh.add(Asteroid.generateAsteroid());
 		while(true){
+			
 			if(running){
+
+				int fps = (int) getFPS();
+				System.out.println("Objects: " + goh.getSize() + " fps:" + (0 - fps));
+				
+				//Drawing the background
 				g.setColor(Color.BLACK);
 				g.fillRect(0, 0, c.getWidth(), c.getHeight());
+				
+				//Calculating player movement, doing it 
 				p.pointAtMouse(this.getLocation());
-				g.setColor(Color.WHITE);
+				calculatePlayerMovement();
 				p.move(dx,dy);
-				if(shooting == true){
-					p.shoot();
-				}
+				
+				goh.moveObjects();
+				
+				if(shooting == true)
+					goh.add(p.shoot());
+			
+				// TODO check for collisions
+				
+				// Gets the array of things to draw
+				objDraw = goh.getObjects();
+				
+				// Draw the player
+				g.setColor(p.getColor());
 				g.drawPolygon(p);
+				
+				for(GameObject gobj : objDraw){
+					g.setColor(gobj.getColor());
+					g.drawPolygon(gobj);
+				}
 				bf.show();
+				
+				try {
+					Thread.sleep(5);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			} else {
 				System.out.println("paused");
 			}
 		}
-		// TODO Auto-generated method stub
 		
+	}
+	
+	private float getFPS(){
+		long oneoverfps = previoustime - System.currentTimeMillis();
+		previoustime = System.currentTimeMillis();
+		return 1000 / (float) oneoverfps;
+	}
+	
+	private void calculatePlayerMovement(){
+		if(leftpressed && !rightpressed){
+			dx = -1;
+		} else if(rightpressed && !leftpressed){
+			dx = 1;
+		} else{
+			dx = 0;
+		}
+		
+		if(uppressed && !downpressed){
+			dy = -1;
+		} else if(downpressed && !uppressed){
+			dy = 1;
+		} else{
+			dy = 0;
+		}
 	}
 
 	@Override
 	public void keyPressed(KeyEvent arg0) {
 		switch(arg0.getKeyChar()){
 		case 'a': 
-			dx = -1;
+			leftpressed = true;
 			break;
 		case 's':
-			dy = 1;
+			downpressed = true;
 			break;
 		case 'w':
-			dy = -1;
+			uppressed = true;
 			break;
 		case 'd':
-			dx = 1;
+			rightpressed = true;
 			break;
 		}
 		
@@ -106,15 +176,21 @@ public class GameWindow extends JFrame implements Runnable, KeyListener, MouseLi
 
 	@Override
 	public void keyReleased(KeyEvent arg0) {
-		// TODO Auto-generated method stub
 		switch(arg0.getKeyChar()){
 		case 'a': 
-		case 'd':
-			dx = 0;
+			leftpressed = false;
 			break;
 		case 's':
+			downpressed = false;
+			break;
 		case 'w':
-			dy = 0;
+			uppressed = false;
+			break;
+		case 'd':
+			rightpressed = false;
+			break;
+		case KeyEvent.VK_ESCAPE:
+			running = !running;
 			break;
 		}
 		
@@ -134,13 +210,13 @@ public class GameWindow extends JFrame implements Runnable, KeyListener, MouseLi
 
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
-		unpause();
+		//unpause();
 		
 	}
 
 	@Override
 	public void mouseExited(MouseEvent arg0) {
-		pause();
+		//pause();
 		
 	}
 
